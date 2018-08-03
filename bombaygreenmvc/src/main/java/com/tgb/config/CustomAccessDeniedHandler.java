@@ -1,0 +1,43 @@
+package com.tgb.config;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+ 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.access.AccessDeniedHandler;
+
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+ 
+  //  public static final Logger LOG
+  //    = Logger.getLogger(CustomAccessDeniedHandler.class);
+	
+	public CustomAccessDeniedHandler() {
+		
+		System.out.println("in CustomAccessDeniedHandler" );
+	}
+ 
+    @Override
+    public void handle(
+      HttpServletRequest request,
+      HttpServletResponse response, 
+      AccessDeniedException exc) throws IOException, ServletException {
+         System.out.println("in handle");
+        Authentication auth 
+          = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+        	System.err.println("User: " + auth.getName() 
+            + " attempted to access the protected URL: "
+            + request.getRequestURI());
+            //LOG.warn();
+        }
+ 
+        response.sendRedirect(request.getContextPath() + "/accessDenied");
+    }
+
+}
